@@ -5,7 +5,7 @@ import os
 import json
 import datetime
 import colored
-from colored import stylize, fg,bg,attr
+from colored import stylize 
 
 #Variables Globales
 teclado = ""
@@ -153,8 +153,11 @@ def generarTeclado():
                 'Z','X','C','V','B','N','M']
     global teclado
     teclado = ""
+    
+    global right_words
     global misplaced_words
     global wrong_words
+    
     
     counter = 0
     for letra in alfabeto:
@@ -194,6 +197,8 @@ def verificacionPalabras(palabraUsuario, palabraOculta):
     listaOculta = list(palabraOculta)
     lenOculto = len(listaOculta)
     lenUsuario = len(listaUsuario)
+    
+    linea_resumen = ""
     
     for j in range(0, lenUsuario):
         letraUser = listaUsuario[j]
