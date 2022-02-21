@@ -4,6 +4,8 @@ from random import randint
 import os
 import json
 import datetime
+import colored
+from colored import stylize, fg,bg,attr
 
 #Variables Globales
 teclado = ""
@@ -128,11 +130,11 @@ def generarTablaRespuestas(palabra):
     lineaTabla = "|"
     for letra in palabra:
         if ((letra in right_words) and (counter in right_words[letra])):
-            lineaTabla  += "{}{}{}|".format("=",letra,"=")
+            lineaTabla  += stylize("{}{}{}".format("=",letra,"="),colored.bg("green")+ colored.fg("black"))+"|"
         elif(letra in misplaced_words):
-            lineaTabla  += "{}{}{}|".format("<",letra,">")
+            lineaTabla  += stylize("{}{}{}".format("<",letra,">"), colored.bg("yellow")+ colored.fg("black")) + "|"
         elif(letra in wrong_words):
-            lineaTabla  += "{}{}{}|".format(">",letra,"<")
+            lineaTabla  += stylize("{}{}{}".format(">",letra,"<"),colored.bg("dark_gray")+ colored.fg("black")) + "|"
         counter += 1
     tablaRespuesta.append(lineaTabla)
     tablaRespuesta.append("+---+---+---+---+---+")
@@ -159,13 +161,13 @@ def generarTeclado():
         if (counter%10 ==0):
             teclado += '\n'
         if (letra in right_words):
-            teclado += "[={}=] ".format(letra)
+            teclado += stylize(" [={}=] ".format(letra), colored.bg("green") + colored.fg("black"))
         elif(letra in misplaced_words):
-            teclado += "[<{}>] ".format(letra)
+            teclado += stylize(" [<{}>] ".format(letra), colored.bg("yellow") + colored.fg("black"))
         elif(letra in wrong_words):
-            teclado += "[>{}<] ".format(letra)
+            teclado += stylize(" [>{}<] ".format(letra), colored.bg("dark_gray") + colored.fg("black"))
         else:
-            teclado += "[ {} ] ".format(letra)
+            teclado += stylize(" [ {} ] ".format(letra), colored.bg("white") + colored.fg("black") )
         counter += 1
 
       
