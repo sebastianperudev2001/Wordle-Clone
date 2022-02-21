@@ -1,3 +1,5 @@
+# -*- coding: utf-8 -*-
+
 #Librerias necesarias
 import requests as req
 from random import randint
@@ -10,7 +12,14 @@ from colored import stylize
 #Variables Globales
 teclado = ""
 
+"""
+Estas estructuras de datos me serán útiles principalmente para poder 
+hacer referencia como el estado de cada letra de las palabras ingresadas
+y así poder generar la tabla de respuestas y el teclado
+"""
+#Diccionario, porque se pueden repetir letras en distintas ubicaciones
 right_words = {}
+#Por lo demas sets para evitar valores repetidos
 misplaced_words = set()
 wrong_words = set()
 
@@ -18,6 +27,9 @@ intentos = 0
 tablaRespuesta = ["+---+---+---+---+---+"] 
 
 palabrasFiltradas = []
+
+resumen = []
+
 
 """
 Se utiliza una librería para poder así descargar el contenido txt del repo 
@@ -72,23 +84,29 @@ def generarListaPalabrasJuego():
     return palabrasJuego
 
 def seleccionarPalabraAlAzar(lista):
+   
+    fecha = datetime.datetime.today().strftime('%Y-%m-%d')  
     archivo = 'palabras_por_fecha.json'
     
     with open(archivo, "r") as file:
         data = json.load(file)
     
-    palabras_usadas = list(data.values())
+    fechas_json = list(data.keys())
     
-    while (True):
-        numero = randint(0, len(lista) - 1)
-        potencial_palabra = lista[numero]
-        if(potencial_palabra not in palabras_usadas):
-            break
+    if(fecha in fechas_json):
+        return data[fecha]
+    else:
+        palabras_usadas = list(data.values())
+        while (True):
+            numero = randint(0, len(lista) - 1)
+            potencial_palabra = lista[numero]
+            if(potencial_palabra not in palabras_usadas):
+                break
+        data[fecha] = potencial_palabra
+        with open(archivo, 'w') as palabrasFecha:
+            json.dump(data,palabrasFecha)
         
     return potencial_palabra
-
-
-
 
 def solicitarInputUsuario():
     global palabrasFiltradas
@@ -98,8 +116,11 @@ def solicitarInputUsuario():
         try:
             palabra = input("Ingrese palabra: ").strip()
             palabra = quitarTildes(palabra)
-            if(len(palabra)== 5 and palabra.isalpha() and palabra in palabrasFiltradas):
-                break
+            if(len(palabra)== 5 and palabra.isalpha()):
+                if (palabra in palabrasFiltradas):
+                    break
+                else: 
+                    print("{} no es una palabra en la Base de datos".format(palabra))
             else:
                 print("{} no es una palabra de 5 letras valida".format(palabra))
         except ValueError as errorValor:
@@ -121,7 +142,6 @@ def imprimirTabla():
             print("|   |   |   |   |   |")
             print("+---+---+---+---+---+")
 
-resumen = []
 
 
 def generarTablaRespuestas(palabra):
@@ -177,6 +197,8 @@ def generarTeclado():
     for letra in alfabeto:
         if (counter%10 ==0):
             teclado += '\n'
+        if(letra == 'Z'):
+            teclado += '\t'
         if (letra in right_words):
             teclado += stylize(" [={}=] ".format(letra), colored.bg("green") + colored.fg("black"))
         elif(letra in misplaced_words):
@@ -220,7 +242,6 @@ def verificacionPalabras(palabraUsuario, palabraOculta):
         for i in range(0, lenOculto):    
             letraOculta = listaOculta[i]   
             if (letraOculta == letraUser) and (i == j):
-                #print('La letra usuario: {} == letra oculta {}'.format(letraUser, letraOculta))
                 #En caso ya exista un valor se appendea
                 if(letraUser in right_words):
                     right_words[letraUser].add(j)
@@ -229,10 +250,8 @@ def verificacionPalabras(palabraUsuario, palabraOculta):
                     right_words[letraUser] = {j}
                 break
             elif(listaUsuario[j] in listaOculta):
-                #print('La letra user Debe estar por aquí {}'.format(letraUser))
                 misplaced_words.add(letraUser)
             else: 
-                #print('La letra user {} != letra oculta {}'.format(letraUser, letraOculta))
                 wrong_words.add(letraUser)
                 break
 
@@ -286,10 +305,11 @@ def generarResumen(resumen):
 def jugarPartida():
     #Generas una lista a partir del txt con las 365 palabras al azar
     listaPalabras = generarListaPalabrasJuego()
+    
+    
     #Se selecciona la palabra misteriosa
     palabraDescubrir = seleccionarPalabraAlAzar(listaPalabras)
     print(palabraDescubrir)
-    agregarElementosJSON(palabraDescubrir)
     #El usuario ingresa su palabra
     global intentos 
     palabrasUsuario = []
@@ -305,26 +325,16 @@ def jugarPartida():
 
         
 
-def agregarElementosJSON(palabra):
-    fecha = datetime.datetime.today().strftime('%Y-%m-%d')  
-    archivo = 'palabras_por_fecha.json'
-    with open(archivo, "r") as file:
-        data = json.load(file)
-    
-    data[fecha] = palabra
-    
-    with open(archivo, 'w') as palabrasFecha:
-        json.dump(data,palabrasFecha)
 
 
 def generarJSON():
     
     archivo = 'palabras_por_fecha.json'
-    data_ejemplo = {'2022-01-19':'aldea', '2022-01-18':'autor', 
-                    '2022-01-17':'credo', '2022-01-16':'ojete',
-                    '2022-01-15':'sarda', '2022-01-14':'fugar',
-                    '2022-01-13':'feraz', '2022-01-12':'adive',
-                    '2022-01-11':'poema', '2022-01-10':'polla'}
+    data_ejemplo = {'2022-01-19':'ALDEA', '2022-01-18':'AUTOR', 
+                    '2022-01-17':'CREDO', '2022-01-16':'OJETE',
+                    '2022-01-15':'SARDA', '2022-01-14':'FUGAR',
+                    '2022-01-13':'FERAZ', '2022-01-12':'ADIVE',
+                    '2022-01-11':'POEMA', '2022-01-10':'POLLA'}
     with open(archivo, 'w') as palabrasFecha:
         json.dump(data_ejemplo,palabrasFecha)
 
@@ -347,13 +357,15 @@ def main():
             if(configuracion_inicial == '1'):
                 #Descargas palabras de la URL y creas un txt con todas
                 descargarPalabras()
-                
                 #Creas JSON con archivos de prueba
                 generarJSON()
                 generarJsonPartida()
                 break 
             elif(configuracion_inicial == '2'):
-                break
+                if(os.path.isfile('filename.txt') and os.path.isfile('partidas.json') and os.path.isfile('palabras_por_fecha.json')):    
+                    break
+                else:
+                    print("No se puede elegir esta opción, porque no existe todavía la BD")
             else: 
                 print("Ingrese 1 o 2 >:(")
         except ValueError as error:
