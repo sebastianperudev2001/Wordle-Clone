@@ -121,21 +121,35 @@ def imprimirTabla():
             print("|   |   |   |   |   |")
             print("+---+---+---+---+---+")
 
+resumen = []
+
 
 def generarTablaRespuestas(palabra):
     global tablaRespuesta
+    global resumen
     global right_words
     global intentos
     counter = 0
     lineaTabla = "|"
+    linea_resumen = ""
+    
+    marron = u"\U0001F7EB"
+    amarillo = u"\U0001f7e8"
+    verde = u"\U0001f7e9"
+
     for letra in palabra:
         if ((letra in right_words) and (counter in right_words[letra])):
             lineaTabla  += stylize("{}{}{}".format("=",letra,"="),colored.bg("green")+ colored.fg("black"))+"|"
+            linea_resumen += verde
         elif(letra in misplaced_words):
             lineaTabla  += stylize("{}{}{}".format("<",letra,">"), colored.bg("yellow")+ colored.fg("black")) + "|"
+            linea_resumen += amarillo
         elif(letra in wrong_words):
             lineaTabla  += stylize("{}{}{}".format(">",letra,"<"),colored.bg("dark_gray")+ colored.fg("black")) + "|"
+            linea_resumen += marron
+
         counter += 1
+    resumen.append(linea_resumen)
     tablaRespuesta.append(lineaTabla)
     tablaRespuesta.append("+---+---+---+---+---+")
    
@@ -187,8 +201,10 @@ def quitarTildes(palabra):
         palabra= palabra.replace(a,b).replace(a.upper(), b.upper())
     return palabra.upper()
 
+
 def verificacionPalabras(palabraUsuario, palabraOculta):
    
+    global resumen
     global right_words
     global misplaced_words
     global wrong_words
@@ -198,7 +214,6 @@ def verificacionPalabras(palabraUsuario, palabraOculta):
     lenOculto = len(listaOculta)
     lenUsuario = len(listaUsuario)
     
-    linea_resumen = ""
     
     for j in range(0, lenUsuario):
         letraUser = listaUsuario[j]
@@ -220,7 +235,7 @@ def verificacionPalabras(palabraUsuario, palabraOculta):
                 #print('La letra user {} != letra oculta {}'.format(letraUser, letraOculta))
                 wrong_words.add(letraUser)
                 break
-    
+
     os.system('cls')
     generarTeclado()
     generarTablaRespuestas(palabraUsuario)
@@ -253,6 +268,21 @@ def generarJsonPartida():
         json.dump({},f)
     
 
+def generarResumen(resumen): 
+    print("##########  RESUMEN DE PARTIDA   ##########")
+    counter = 0
+    for element in resumen:
+        print(element)
+        counter += 1
+
+    diferencia = 6-counter
+    marron = u"\U0001F7EB"
+    relleno = marron*5
+    for i in range(0, diferencia):    
+        print(relleno)
+    
+    print("GRACIAS POR JUGAR")
+
 def jugarPartida():
     #Generas una lista a partir del txt con las 365 palabras al azar
     listaPalabras = generarListaPalabrasJuego()
@@ -271,6 +301,7 @@ def jugarPartida():
         if (verificacionPalabras(inputUsuario,palabraDescubrir) == 1):
             break
     registrarPartida(palabraDescubrir, palabrasUsuario)
+    generarResumen(resumen)
 
         
 
@@ -335,7 +366,4 @@ def main():
     jugarPartida()
 
 
-
-
 main()
-
