@@ -1,5 +1,5 @@
 # Wordle-Clone
-![Demo]("https://github.com/sebastianperudev2001/Wordle-Clone/blob/main/demo.png?raw=true")
+![Demo](https://github.com/sebastianperudev2001/Wordle-Clone/blob/main/demo.png)
 By: Sebastián Chávarry
 
 ## Description
