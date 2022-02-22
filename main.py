@@ -309,7 +309,7 @@ def jugarPartida():
     
     #Se selecciona la palabra misteriosa
     palabraDescubrir = seleccionarPalabraAlAzar(listaPalabras)
-    print(palabraDescubrir)
+    #print(palabraDescubrir)
     #El usuario ingresa su palabra
     global intentos 
     palabrasUsuario = []
