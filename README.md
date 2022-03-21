@@ -3,7 +3,8 @@
 By: Sebastián Chávarry
 
 ## Description
-Wordle clone made for application process at MDP Consulting (Perú) for Trainee Program. This application was implemented in Python trying to emulate Wordle on terminal.
+
+This application was implemented in Python trying to emulate Wordle on terminal.
 
 ## Functionalites 
 
